@@ -1,29 +1,5 @@
 /* -------------------------------------------------------------------------- */
 /* Ejemplo de conexion hacia POSTGRESQL desde Java utilizando el driver JDBC. */
-/*                                                                            */
-/* NOTA: Para hacer esta integracion debe descargar el driver JDBC. Para el   */
-/*       momento de crear este ejemplo el nombre del archivo (.jar) que       */
-/*       contiene el driver es "postgresql-42.2.18.jar" (varia con version).  */
-/*                                                                            */
-/* NOTA: Luego de descargar este archivo (.jar) debe colocarlo en una carpeta */
-/*       del JDK. Para este ejemplo se coloco en "C:\jdk-15\bin".             */
-/*                                                                            */
-/*       Una vez que se tenga dicho archivo colocado en esa carpeta, debe     */
-/*       actualizar (o crear si no existe) la variable de ambiente CLASSPATH. */
-/*       Para hacer esto vaya a las "System Variables" en System Properties   */
-/*       de Windows. Alli debe crear una variable nueva (de no existir)       */
-/*       llamada "CLASSPATH" e incluir en ella lo siguiente:                  */
-/*                                                                            */
-/*       .;C:\jdk-15\bin;C:\jdk-15\bin\postgresql-42.2.18.jar                 */
-/*                                                                            */
-/*       En esta sintaxis se le indica a la Java Virtual Machine donde esta   */
-/*       localizado el driver JDBC. Guardar el cambio de ambiente.            */
-/* NOTA: Por ultimo para ejecutar esta prueba de conexion y consulta SQL:     */
-/*                                                                            */
-/*       C:\jdk-15\bin>java -Djdbc.drivers=org.postgresql.Driver prueba       */
-/*                                                                            */
-/*       Con la opcion "-D" se indica el nombre del driver JDBC a usar.       */
-/*       Esta "D" debe ir pegada al identificador "jdbc.drivers"!!            */
 /* -------------------------------------------------------------------------- */
 
 // Estas librerias son necesarias para usar el JDBC.
@@ -37,52 +13,52 @@ public class PostgreJDBC
 {
 	public static void main(String[] args)
 	{
-		Connection c   = null;        // Declaramos la instancia de conexion.
-        Statement stmt = null;        // Declaramos la instancia de sentencia SQL.
+           Connection c   = null;        // Declaramos la instancia de conexion.
+           Statement stmt = null;        // Declaramos la instancia de sentencia SQL.
 
-		try {
-			// Class.forName("org.postgresql.Driver"); // Esta sentencia hace lo mismo que la opcion "-D" arriba. No es necesaria.
+           try {
+                  // Class.forName("org.postgresql.Driver"); // Esta sentencia hace lo mismo que la opcion "-D" arriba. No es necesaria.
+		  
+		  // Realiza la conexion a la base de datos "inventario" con el user y password indicados.
+		  c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/inventario", "postgres", "apollo2134");
 
-            // Realiza la conexion a la base de datos "inventario" con el user y password indicados.
-			c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/inventario", "postgres", "apollo2134");
+                  c.setAutoCommit(false);
 
-			c.setAutoCommit(false);
+                  System.out.println("Se conecto a la base de datos de forma exitosa!");
 
-            System.out.println("Se conecto a la base de datos de forma exitosa!");
+                  // Ahora creamos un statement.
+                  stmt = c.createStatement();
 
-            // Ahora creamos un statement.
-            stmt = c.createStatement();
+                  // Ejecutamos la sentencia SQL y colocamos el resultado en este cursor.
+                  ResultSet rs = stmt.executeQuery("SELECT * FROM empleados;");
 
-            // Ejecutamos la sentencia SQL y colocamos el resultado en este cursor.
-            ResultSet rs = stmt.executeQuery("SELECT * FROM empleados;");
+                  // Iteramos a traves del cursor.
+                  while(rs.next())
+                  {
+                     // Colocamos los valores de cada campo en variables manteniendo su tipo de dato.
+                     int    id       = rs.getInt("id");
+                     String name     = rs.getString("nombre");
+                     String apellido = rs.getString("apellido");
+                     int    dept     = rs.getInt("dept");
 
-            // Iteramos a traves del cursor.
-            while(rs.next())
-            {
-                // Colocamos los valores de cada campo en variables manteniendo su tipo de dato.
-            	int    id       = rs.getInt("id");
-            	String name     = rs.getString("nombre");
-            	String apellido = rs.getString("apellido");
-            	int    dept     = rs.getInt("dept");
+                     // Imprimimos el resultado de la consulta.
+                     System.out.println("ID: " + id); 
+                     System.out.println("Nombre: " + name); 
+                     System.out.println("Apellido: " + apellido);
+                     System.out.println("Departamento: " + dept);
+                     System.out.println();
+                  }
 
-                // Imprimimos el resultado de la consulta.
-            	System.out.println("ID: " + id); 
-            	System.out.println("Nombre: " + name); 
-            	System.out.println("Apellido: " + apellido);
-            	System.out.println("Departamento: " + dept);
-            	System.out.println();
-            }
+                 // Cerramos todas las instancias de conexion, statement y cursor.
+                 rs.close();
+                 stmt.close();
+                 c.close();
+              } catch (Exception e) {
+                 e.printStackTrace();
+                 System.err.println(e.getClass().getName() + ": " + e.getMessage());
+                 System.exit(0);
+              }
 
-            // Cerramos todas las instancias de conexion, statement y cursor.
-            rs.close();
-            stmt.close();
-            c.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
-
-		System.out.println("FIN de la consulta.");
-	}
+              System.out.println("FIN de la consulta.");
+           }
 }
