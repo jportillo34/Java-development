@@ -1,4 +1,4 @@
-## Integration between Java and PostgreSQL instance on Windows
+## Java and PostgreSQL integration (on Windows)
 
 The first thing you have to do is download the JDBC driver (JAR file). For the time of this development the jar file is called "postgresql-42.2.18.jar".
 
