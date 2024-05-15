@@ -22,6 +22,7 @@ class Multithread {
 			Thread object = new Thread(new MultithreadingDemo());
 			object.start();
 		}
+		System.out.println("NUEVA LINEA DE PROGRAMA");
 	}
 }
 
