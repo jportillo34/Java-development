@@ -23,6 +23,7 @@ class Multithread {
 			object.start();
 		}
 		System.out.println("CAMBIO#1");
+		System.out.println("CAMBIO#2");
 	}
 }
 
